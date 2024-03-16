@@ -33,7 +33,7 @@ import { useSelector } from 'react-redux'
 import { ModalService } from 'src/components/utilities'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Skeleton from 'react-loading-skeleton'
-import { CippTable, cellBooleanFormatter } from 'src/components/tables'
+import { CippTable } from 'src/components/tables'
 import allStandardsList from 'src/data/standards'
 import CippCodeOffCanvas from 'src/components/utilities/CippCodeOffcanvas'
 import GDAPRoles from 'src/data/GDAPRoles'
@@ -184,7 +184,6 @@ const ApplyNewStandard = () => {
       sortable: true,
       exportSelector: 'displayName',
     },
-
     {
       name: 'Applied Standards',
       selector: (row) => row['StandardsExport'],
@@ -207,16 +206,10 @@ const ApplyNewStandard = () => {
     (tenant) => tenant.displayName === 'AllTenants',
   )
 
-  function getLabel(item, type) {
-    if (!item || !item.name) {
-      return ''
-    }
+  function getLabel(item) {
     const keys = item.name.split('.')
     let value = keys.reduce((prev, curr) => prev && prev[curr], allTenantsStandard)
-    if (!value || !value[type]) {
-      return ''
-    }
-    return `* Enabled via All Tenants`
+    return value ? `* Enabled via All Tenants` : ''
   }
 
   const groupedStandards = allStandardsList.reduce((acc, obj) => {
@@ -443,7 +436,7 @@ const ApplyNewStandard = () => {
                                           name={`${obj.name}.report`}
                                           disabled={obj.disabledFeatures?.report}
                                           helpText="Report stores the data in the database to use in custom BPA reports."
-                                          sublabel={getLabel(obj, 'report')}
+                                          sublabel={getLabel(obj)}
                                         />
                                       </CCol>
                                       <CCol>
@@ -452,7 +445,7 @@ const ApplyNewStandard = () => {
                                           name={`${obj.name}.alert`}
                                           disabled={obj.disabledFeatures?.warn}
                                           helpText="Alert Generates an alert in the log, if remediate is enabled the log entry will also say if the remediation was successful."
-                                          sublabel={getLabel(obj, 'alert')}
+                                          sublabel={getLabel(obj)}
                                         />
                                       </CCol>
                                       <CCol>
@@ -461,7 +454,7 @@ const ApplyNewStandard = () => {
                                           name={`${obj.name}.remediate`}
                                           disabled={obj.disabledFeatures?.remediate}
                                           helpText={'Remediate executes the fix for standard.'}
-                                          sublabel={getLabel(obj, 'remediate')}
+                                          sublabel={getLabel(obj)}
                                         />
                                       </CCol>
                                       <CCol md={3}>
